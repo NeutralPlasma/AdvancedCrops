@@ -17,7 +17,6 @@ pipeline {
 				withCredentials([usernamePassword(credentialsId: 'NEXUS1', usernameVariable: 'NEXUS1_USERNAME', passwordVariable: 'NEXUS1_PASSWORD')]) {
 					script {
 						echo "Using Nexus username: ${env.NEXUS1_USERNAME}"
-						echo "Nexus password is set: ${env.NEXUS1_PASSWORD}"
 					}
 					sh 'chmod +x gradlew'
                     sh './gradlew build'
