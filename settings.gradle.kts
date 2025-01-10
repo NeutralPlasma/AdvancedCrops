@@ -4,8 +4,8 @@
 // It is also used for some aspects of project-wide configuration, like managing plugins, dependencies, etc.
 // https://docs.gradle.org/current/userguide/settings_file_basics.html
 
-val user = extra["nexusUser"]?.toString() ?: System.getenv("NEXUS1_USERNAME") ?: error("Invalid nexus user")
-val password = extra["nexusPassword"]?.toString() ?: System.getenv("NEXUS1_PASSWORD") ?: error("Invalid nexus password")
+val user = System.getenv("NEXUS1_USERNAME") ?: extra["nexusUser"]?.toString()  ?: error("Invalid nexus user")
+val password = System.getenv("NEXUS1_PASSWORD") ?: extra["nexusPassword"]?.toString() ?:  error("Invalid nexus password")
 
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
