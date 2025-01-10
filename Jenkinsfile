@@ -15,6 +15,9 @@ pipeline {
         stage('Build') {
 			steps {
 				withCredentials([usernamePassword(credentialsId: 'NEXUS1', usernameVariable: 'NEXUS1_USERNAME', passwordVariable: 'NEXUS1_PASSWORD')]) {
+					script {
+						echo "Using Nexus username: ${env.NEXUS1_USERNAME}"
+					}
 					sh 'chmod +x gradlew'
                     sh './gradlew build'
                 }
