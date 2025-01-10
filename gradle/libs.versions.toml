@@ -9,6 +9,7 @@ kotlinxSerializationJSON = "1.7.2"
 kotlinxCoroutines = "1.8.1"
 virtusCore = "1.2.0.0.0"
 hikariCP = "5.0.1"
+mcCorutine = "2.20.0"
 
 [libraries]
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -17,6 +18,8 @@ kotlinxSerialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-j
 kotlinxCoroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 virtusCore = { module = "eu.virtusdevelops:VirtusCore", version.ref="virtusCore"}
 hikariCP = { module = "com.zaxxer:HikariCP", version.ref="hikariCP"}
+mcCorutineApi = { module = "com.github.shynixn.mccoroutine:mccoroutine-bukkit-api", version.ref="mcCorutine"}
+mcCorutineCore = { module = "com.github.shynixn.mccoroutine:mccoroutine-bukkit-core", version.ref="mcCorutine"}
 
 # Libraries can be bundled together for easier import
 [bundles]

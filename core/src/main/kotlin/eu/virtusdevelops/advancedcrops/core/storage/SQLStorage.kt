@@ -6,6 +6,7 @@ import eu.virtusdevelops.advancedcrops.core.dao.CropDao
 import eu.virtusdevelops.advancedcrops.core.storage.mysql.CropDaoMysqlImpl
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.IOException
+import java.net.URI
 import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -121,7 +122,8 @@ class SQLStorage(private val plugin: JavaPlugin, private val logger: Logger) {
 
 
     private fun loadH2Library(): IsolatedClassLoader? {
-        val jarUrl = "https://repo1.maven.org/maven2/com/h2database/h2/2.3.232/h2-2.3.232.jar"
+        val jarUrl = URI.create("https://repo1.maven.org/maven2/com/h2database/h2/2.3.232/h2-2.3.232.jar")
+
 
         // Get plugin folder and ensure the 'libs' subfolder exists
         val pluginFolder = plugin.dataFolder.toPath()
@@ -140,7 +142,7 @@ class SQLStorage(private val plugin: JavaPlugin, private val logger: Logger) {
         if (!Files.exists(jarPath)) {
             // If not, download it
             try {
-                URL(jarUrl).openStream().use { `in` ->
+                jarUrl.toURL().openStream().use { `in` ->
                     Files.copy(`in`, jarPath)
                     logger.info("Downloaded H2 Library")
                 }
