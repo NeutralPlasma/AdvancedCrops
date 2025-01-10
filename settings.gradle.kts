@@ -8,7 +8,7 @@ val user = System.getenv("NEXUS1_USERNAME") ?: extra["nexusUser"]?.toString()  ?
 val password = System.getenv("NEXUS1_PASSWORD") ?: extra["nexusPassword"]?.toString() ?:  error("Invalid nexus password")
 
 println("Resolved Nexus username: $user")
-println("Resolved Nexus password: $password")
+println("Resolved Nexus password: ${if (password.isNotEmpty()) "****-****" else "EMPTY"}")
 
 
 dependencyResolutionManagement {
