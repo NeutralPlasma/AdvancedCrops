@@ -1,0 +1,8 @@
+db:
+  mysql: false
+  username: "database_user"
+  password: "user_password"
+  ip: "127.0.0.1"
+  port: "3306"
+  database: "crops"
+  ssl: false
