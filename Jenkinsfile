@@ -1,29 +1,30 @@
 pipeline {
-	def gradleVersion = 'gradle8'
-	def gradleHome = tool gradleVersion
+	agent any
+    environment {
+		gradleVersion = 'gradle8'
+        gradleHome = "${tool gradleVersion}"
+    }
 
-	stages {
+    stages {
 		stage('Checkout') {
-			git url: 'https://github.com/NeutralPlasma/AdvancedCrops.git', branch: 'master'
-		}
-
-		stage('Build'){
-
 			steps {
-				withCredentials([
-					string(credentialsId: 'NEXUS1', usernameVariable: 'NEXUS1_USERNAME', passwordVariable: 'NEXUS1_PASSWORD'),
-				]){
+				git url: 'https://github.com/NeutralPlasma/AdvancedCrops.git', branch: 'master'
+            }
+        }
+
+        stage('Build') {
+			steps {
+				withCredentials([usernamePassword(credentialsId: 'NEXUS1', usernameVariable: 'NEXUS1_USERNAME', passwordVariable: 'NEXUS1_PASSWORD')]) {
 					sh 'chmod +x gradlew'
-					sh './gradlew build'
-				}
-			}
-		}
-	}
+                    sh './gradlew build'
+                }
+            }
+        }
+    }
 
-	post {
+    post {
 		always {
-			archiveArtifacts artifacts: '**/build/libs/AdvancedCrops-*.jar', allowEmtpyArchive: true
-		}
-	}
-
+			archiveArtifacts artifacts: '**/build/libs/AdvancedCrops-*.jar', allowEmptyArchive: true
+        }
+    }
 }
