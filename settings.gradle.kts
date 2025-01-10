@@ -7,6 +7,10 @@
 val user = System.getenv("NEXUS1_USERNAME") ?: extra["nexusUser"]?.toString()  ?: error("Invalid nexus user")
 val password = System.getenv("NEXUS1_PASSWORD") ?: extra["nexusPassword"]?.toString() ?:  error("Invalid nexus password")
 
+println("Resolved Nexus username: $user")
+println("Resolved Nexus password: ${if (password.isNotEmpty()) "****" else "EMPTY"}")
+
+
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
@@ -16,7 +20,7 @@ dependencyResolutionManagement {
 
         maven {
             url = uri("https://nexus.virtusdevelops.eu/repository/maven-releases/")
-            isAllowInsecureProtocol = true
+            isAllowInsecureProtocol = false
             credentials{
                 username = user
                 password = password
