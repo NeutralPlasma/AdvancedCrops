@@ -4,14 +4,6 @@
 // It is also used for some aspects of project-wide configuration, like managing plugins, dependencies, etc.
 // https://docs.gradle.org/current/userguide/settings_file_basics.html
 
-val user = System.getenv("NEXUS1_USERNAME")
-    ?: extra["nexusUser"]?.toString()
-    ?: error("Invalid nexus user")
-
-val password = System.getenv("NEXUS1_PASSWORD")
-    ?: extra["nexusPassword"]?.toString()
-    ?:  error("Invalid nexus password")
-
 
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
@@ -24,8 +16,12 @@ dependencyResolutionManagement {
             url = uri("https://nexus.virtusdevelops.eu/repository/maven-releases/")
             isAllowInsecureProtocol = false
             credentials{
-                username = user
-                password = password
+                username = System.getenv("NEXUS1_USERNAME")
+                            ?: extra["nexusUser"]?.toString()
+                            ?: error("Invalid nexus user")
+                password = System.getenv("NEXUS1_PASSWORD")
+                            ?: extra["nexusPassword"]?.toString()
+                            ?:  error("Invalid nexus password")
             }
         }
 
