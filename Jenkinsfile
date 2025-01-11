@@ -19,10 +19,11 @@ pipeline {
 					]) {
 					script {
 						echo "Using Nexus username: ${env.NEXUS1_USERNAME}"
-						echo "Password length: ${env.NEXUS1_PASSWORD.length()}"
 					}
 					sh 'chmod +x gradlew'
 					sh """
+						export NEXUS1_USERNAME=${NEXUS1_USERNAME}
+						export NEXUS1_PASSWORD=${NEXUS1_PASSWORD}
 						./gradlew build
 					"""
                 }

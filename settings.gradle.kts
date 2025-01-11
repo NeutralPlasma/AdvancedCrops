@@ -12,12 +12,6 @@ val password = System.getenv("NEXUS1_PASSWORD")
     ?: extra["nexusPassword"]?.toString()
     ?:  error("Invalid nexus password")
 
-println("Resolved Nexus username: $user")
-println("Resolved Nexus password: ${if (password.isNotEmpty()) "****-****" else "EMPTY"}")
-println("Resolved Nexus password length: ${password.length}")
-
-
-
 
 dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
