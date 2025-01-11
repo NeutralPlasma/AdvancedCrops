@@ -1,6 +1,6 @@
 package eu.virtusdevelops.advancedcrops.plugin.listeners
 
-import eu.virtusdevelops.advancedcrops.shared.crop.CropPosition
+import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
 import eu.virtusdevelops.virtuscore.chat.TextUtils
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

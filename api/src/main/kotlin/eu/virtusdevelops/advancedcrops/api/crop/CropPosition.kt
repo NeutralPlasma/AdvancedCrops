@@ -21,17 +21,17 @@ data class CropPosition(
      */
     val worldName: String
 ){
-    private val world by lazy { Bukkit.getWorld(worldName) }
-
-
     /**
-     * Retrieves the world associated with the stored worldName in this CropPosition.
+     * Lazily initialized Minecraft world instance corresponding to the `worldName`.
+     * This property references the server's World object determined by the `worldName` associated
+     * with this instance of CropPosition.
      *
-     * @return The World object corresponding to the worldName, or null if the world does not exist.
+     * @throws IllegalArgumentException if the world identified by `worldName` does not exist.
      */
-    fun getWorld(): World? {
-        return world
-    }
+    val world by lazy { Bukkit.getWorld(worldName) }
+
+
+
 
     /**
      * Converts the stored chunk and position data into a concrete Minecraft world location.
