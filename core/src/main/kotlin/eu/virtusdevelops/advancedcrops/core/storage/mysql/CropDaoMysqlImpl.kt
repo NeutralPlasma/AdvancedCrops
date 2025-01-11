@@ -12,15 +12,7 @@ class CropDaoMysqlImpl(private val dataSource: HikariDataSource,
     private val logger: Logger) : CropDao {
 
 
-    /**
-     * crop:
-     * id
-     * placed_by
-     * configuration_name
-     * location
-     * bone meal status
-     *
-     */
+
 
 
     override fun init() {
@@ -30,17 +22,32 @@ class CropDaoMysqlImpl(private val dataSource: HikariDataSource,
                 """
                     CREATE TABLE IF NOT EXISTS ac_crop (
                         id UUID PRIMARY KEY,
-                        placed_by UUID,
-                        configuration_name UUID,
+                        configuration_name VARCHAR(255),
+                        bone_meal INTEGER NOT NULL DEFAULT 0,
+                        growth_stage INTEGER NOT NULL DEFAULT 0,
+                        humidity INTEGER NOT NULL DEFAULT 0,
+                        fertility INTEGER NOT NULL DEFAULT 0,
+                        
+                        chunk_x INTEGER NOT NULL DEFAULT 0,
+                        chunk_z INTEGER NOT NULL DEFAULT 0,
+                        
+                        position_x INTEGER NOT NULL DEFAULT 0,
+                        position_y INTEGER NOT NULL DEFAULT 0,
+                        position_z INTEGER NOT NULL DEFAULT 0,
+                        
+                        world VARCHAR(255) NOT NULL,
+                        
+                        placedby UUID,
                         placed TIMESTAMP,
-                        created_on TIMESTAMP
+                        updated TIMESTAMP
+                        
                     );
                 """.trimIndent()
                 )
                 statement.execute()
             }
         } catch (e: SQLException) {
-            logger.severe("Exception occured while initializing CInvite MYSQL Dao")
+            logger.severe("Exception occured while initializing Crops table")
             e.printStackTrace()
         }
     }

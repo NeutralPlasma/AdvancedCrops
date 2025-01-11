@@ -3,16 +3,12 @@ plugins {
 }
 
 group = "eu.virtusdevelops"
-version = "unspecified"
-
-repositories {
-    mavenCentral()
+version = "0.0.1"
 
 
-    mavenLocal()
-}
-
+val minecraftVersion: String = "1.21.4"
 dependencies {
+    compileOnly("io.papermc.paper:paper-api:$minecraftVersion-R0.1-SNAPSHOT")
     testImplementation(kotlin("test"))
 }
 

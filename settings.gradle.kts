@@ -4,11 +4,18 @@
 // It is also used for some aspects of project-wide configuration, like managing plugins, dependencies, etc.
 // https://docs.gradle.org/current/userguide/settings_file_basics.html
 
-val user = System.getenv("NEXUS1_USERNAME") ?: extra["nexusUser"]?.toString()  ?: error("Invalid nexus user")
-val password = System.getenv("NEXUS1_PASSWORD") ?: extra["nexusPassword"]?.toString() ?:  error("Invalid nexus password")
+val user = System.getenv("NEXUS1_USERNAME")
+    ?: extra["nexusUser"]?.toString()
+    ?: error("Invalid nexus user")
+
+val password = System.getenv("NEXUS1_PASSWORD")
+    ?: extra["nexusPassword"]?.toString()
+    ?:  error("Invalid nexus password")
 
 println("Resolved Nexus username: $user")
 println("Resolved Nexus password: ${if (password.isNotEmpty()) "****-****" else "EMPTY"}")
+
+
 
 
 dependencyResolutionManagement {

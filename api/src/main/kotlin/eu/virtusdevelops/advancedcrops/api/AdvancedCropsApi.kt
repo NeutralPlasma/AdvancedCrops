@@ -72,4 +72,11 @@ interface AdvancedCropsApi {
      * @return An instance of HoeStorage.
      */
     fun getHoeStorage(): HoeStorage
+
+    /**
+     * Retrieves the CropManager instance associated with the API.
+     *
+     * @return An instance of CropManager, which provides functionality for managing crops within the system.
+     */
+    fun getCropManager(): CropManager
 }
