@@ -1,6 +1,7 @@
 package eu.virtusdevelops.advancedcrops.core.crop
 
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkCoordinates
+import eu.virtusdevelops.advancedcrops.core.storage.ChunkData
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
 import eu.virtusdevelops.advancedcrops.api.crop.Crop
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
@@ -9,7 +10,6 @@ import eu.virtusdevelops.advancedcrops.core.dao.CropDao
 import eu.virtusdevelops.advancedcrops.core.storage.AsyncExecutor
 import org.bukkit.Location
 import java.util.logging.Logger
-import kotlin.math.log
 
 class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) : CropStorage {
 
@@ -17,23 +17,32 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
     // hash map with chunks that then have hash map of crops?
 
 
-    private var crops: HashMap<String, HashMap<ChunkCoordinates, HashMap<ChunkPosition, Crop>>>  = HashMap()
+    private var chunkData: HashMap<String, HashMap<ChunkCoordinates, ChunkData<Crop>>> = HashMap()
+
+    //private var crops: HashMap<String, HashMap<ChunkCoordinates, HashMap<ChunkPosition, Crop>>>  = HashMap()
 
 
 
-    override fun getCrop(location: org.bukkit.Location): Crop? {
+    override fun getCrop(location: Location): Crop? {
 
         val cropPosition = CropPosition.fromLocation(location)
         val chunkCoordinates = cropPosition.chunkCoordinates
         val world = location.world.name
 
-        if(crops.containsKey(world)) {
+        if(chunkData.containsKey(world)){
+            if(chunkData[world]!!.containsKey(chunkCoordinates)){
+                return chunkData[world]!!.get(chunkCoordinates)?.getItem(cropPosition.chunkPos)
+
+            }
+        }
+
+        /*if(crops.containsKey(world)) {
             if (crops[world]?.containsKey(chunkCoordinates) == true) {
                 crops[world]?.get(chunkCoordinates)?.let {
                     return it[cropPosition.chunkPos]
                 }
             }
-        }
+        }*/
         // if the chunk for some reason isn't yet loaded
         AsyncExecutor.executor.submit {
             // load the chunk from storage
@@ -42,27 +51,36 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
         return null
     }
 
-    override fun storeCrop(crop: Crop) {
+    override fun storeCrop(crop: Crop): Boolean {
         val location = crop.location
 
-        if(!crops.containsKey(location.worldName)){
-            crops[location.worldName] = HashMap()
+        if(!chunkData.containsKey(location.worldName)){
+            chunkData[location.worldName] = HashMap()
         }
 
-        if(!(crops[location.worldName]?.containsKey(location.chunkCoordinates))!!){
-            crops[location.worldName]?.put(location.chunkCoordinates, HashMap())
+        if(!(chunkData[location.worldName]?.containsKey(location.chunkCoordinates))!!){
+            chunkData[location.worldName]?.put(location.chunkCoordinates, ChunkData(location.chunkCoordinates))
         }
 
         // now insert the crop
-        crops[location.worldName]?.get(location.chunkCoordinates)?.put(location.chunkPos, crop)
+        chunkData[location.worldName]?.get(location.chunkCoordinates)?.addItem(crop)
 
         logger.info("Crop stored: $crop")
+        return true
     }
 
-    override fun removeCrop(crop: Crop) {
+    override fun removeCrop(crop: Crop): Boolean {
         // remove from crops
-        crops[crop.location.worldName]?.get(crop.location.chunkCoordinates)?.remove(crop.location.chunkPos)
-        logger.info("Removed crop: $crop")
+
+        if(chunkData[crop.location.worldName] != null) {
+
+            if(chunkData[crop.location.worldName]!!.containsKey(crop.location.chunkCoordinates)){
+                if(chunkData[crop.location.worldName]!!.get(crop.location.chunkCoordinates)?.removeItem(crop) == true)
+                    return true
+            }
+            return false
+        }
+        return false
     }
 
 
@@ -82,11 +100,13 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
                 cropsNew[crop.location.chunkPos] = crop
             }
 
-            if(crops.containsKey(world))
-                crops[world]?.put(chunkCoordinates, cropsNew)
-            else crops[world] = HashMap()
+            val newChunkData = ChunkData(chunkCoordinates, cropsNew)
 
-            crops[world]?.set(chunkCoordinates, cropsNew)
+            if(!chunkData.containsKey(world)){
+                chunkData[world] = HashMap()
+            }
+
+            chunkData[world]!!.set(chunkCoordinates, newChunkData)
 
             //logger.info("Chunk loaded: $chunkCoordinates")
 
@@ -98,48 +118,70 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
     }
 
     override fun unloadChunk(x: Int, z: Int, world: String) {
+
+        val removedChunk = chunkData[world]?.remove(ChunkCoordinates(x, z)) ?: return
+
         AsyncExecutor.executor.submit {
+            // first process removed
+            for(crop in removedChunk.removedItems.values) {
+                cropDao.delete(crop.id)
+            }
 
-            // save data to database then unload
-            val toSave = crops[world]?.get(ChunkCoordinates(x, z))
-
-            for (crop in toSave?.values!!) {
+            // process added and existing items
+            for(crop in removedChunk.addedItems.values) {
                 cropDao.save(crop)
             }
 
-
-
-            if(crops.containsKey(world)) {
-                crops[world]?.remove(ChunkCoordinates(x, z))
+            // update any crops that were updated
+            for(crop in removedChunk.items.values) {
+                if(crop.changed)
+                    cropDao.save(crop)
             }
         }
     }
 
 
+
     override fun getCrop(position: CropPosition): Crop? {
-        if(crops.containsKey(position.world?.name)) {
-            if(crops[position.world?.name]?.containsKey(position.chunkCoordinates) == true) {
-                crops[position.world?.name]?.get(position.chunkCoordinates)?.let {
-                    return it[position.chunkPos]
-                }
-            }
-        }
-        return null;
+
+        if(!chunkData.containsKey(position.worldName))
+            return null
+
+
+        if(!chunkData[position.worldName]!!.containsKey(position.chunkCoordinates))
+            return null
+
+
+        return chunkData[position.worldName]?.get(position.chunkCoordinates)?.getItem(position.chunkPos)
+
     }
 
 
     override fun saveAll() {
-        logger.info("Saving crops...")
-        for (world in crops.keys) {
-            logger.info("Saving world: $world")
-            for (chunk in crops[world]?.keys!!) {
-                val toSave = crops[world]?.get(chunk)
-                for (crop in toSave?.values!!) {
-                    cropDao.save(crop)
-                    logger.info("Saving crop: $crop")
+
+        //
+        for (world in chunkData.keys) {
+
+            for (chunk in chunkData[world]!!.values) {
+
+
+                for (crop in chunk.removedItems.values) {
+                    cropDao.delete(crop.id)
                 }
+
+                // process added and existing items
+                for (crop in chunk.addedItems.values) {
+                    cropDao.save(crop)
+                }
+
+                // update any crops that were updated
+                for (crop in chunk.items.values) {
+                    if (crop.changed)
+                        cropDao.save(crop)
+                }
+
+
             }
         }
     }
-
 }

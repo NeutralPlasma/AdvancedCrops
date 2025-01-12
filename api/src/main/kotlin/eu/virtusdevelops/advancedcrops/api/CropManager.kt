@@ -41,11 +41,11 @@ public interface CropManager {
      * @param crop The Crop instance to be added, which contains details such as position, growth stage,
      *             and metadata required for managing the crop.
      */
-    fun addCrop(crop: Crop)
+    fun addCrop(crop: Crop): Boolean
 
 
 
-    fun deleteCrop(crop: Crop)
+    fun deleteCrop(crop: Crop): Boolean
 
     /**
      * Loads all crop data into the crop management system.

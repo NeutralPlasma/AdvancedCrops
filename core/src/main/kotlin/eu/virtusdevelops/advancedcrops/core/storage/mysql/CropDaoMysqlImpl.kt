@@ -1,6 +1,8 @@
 package eu.virtusdevelops.advancedcrops.core.storage.mysql
 
 import com.zaxxer.hikari.HikariDataSource
+import eu.virtusdevelops.advancedcrops.api.chunk.ChunkCoordinates
+import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
 import eu.virtusdevelops.advancedcrops.api.crop.Crop
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
 import eu.virtusdevelops.advancedcrops.core.dao.CropDao
@@ -79,12 +81,21 @@ class CropDaoMysqlImpl(private val dataSource: HikariDataSource,
 
                 val resultSet = statement.executeQuery()
                 while(resultSet.next()){
-                    val location = CropPosition.fromCoordinates(
-                        resultSet.getInt("position_x"),
-                        resultSet.getInt("position_y"),
-                        resultSet.getInt("position_z"),
+
+                    val location = CropPosition(
+                        ChunkPosition(
+                            resultSet.getInt("position_x"),
+                            resultSet.getInt("position_y"),
+                            resultSet.getInt("position_z")
+                        ),
+                        ChunkCoordinates(
+                            resultSet.getInt("chunk_x"),
+                            resultSet.getInt("chunk_z"),
+                        ),
                         resultSet.getString("world")
                     )
+
+
 
 
                     val crop = Crop(
@@ -168,7 +179,7 @@ class CropDaoMysqlImpl(private val dataSource: HikariDataSource,
                     preparedStatement.setInt(4, entity.fertilizer)
                     preparedStatement.setTimestamp(5, Timestamp(entity.updateTime))
 
-                    preparedStatement.execute()
+                    preparedStatement.executeUpdate()
 
                     return preparedStatement.updateCount != 0
                 }
@@ -185,7 +196,21 @@ class CropDaoMysqlImpl(private val dataSource: HikariDataSource,
     }
 
     override fun delete(uuid: UUID): Boolean {
-        TODO("Not yet implemented")
+        try{
+            dataSource.connection.use { connection ->
+
+                val preparedStatement = connection.prepareStatement("""
+                    DELETE FROM ac_crop WHERE id = ?;
+                """.trimIndent())
+                preparedStatement.setObject(1, uuid)
+
+                preparedStatement.executeUpdate()
+
+                return preparedStatement.updateCount != 0
+            }
+        }catch (e: SQLException){
+            return false
+        }
     }
 
     override fun getAll(): List<Crop> {

@@ -22,15 +22,12 @@ class CropManagerImpl(private val cropStorage: CropStorage) : CropManager {
         TODO("Not yet implemented")
     }
 
-    override fun addCrop(crop: Crop) {
-        cropStorage.storeCrop(crop)
-
-
-
+    override fun addCrop(crop: Crop): Boolean {
+        return cropStorage.storeCrop(crop)
     }
 
-    override fun deleteCrop(crop: Crop) {
-        cropStorage.removeCrop(crop)
+    override fun deleteCrop(crop: Crop): Boolean {
+        return cropStorage.removeCrop(crop)
     }
 
     override fun loadCrops() {

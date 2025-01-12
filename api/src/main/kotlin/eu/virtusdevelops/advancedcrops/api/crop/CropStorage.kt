@@ -34,13 +34,13 @@ interface CropStorage {
      *
      * @param crop The crop instance to be stored.
      */
-    fun storeCrop(crop: Crop)
+    fun storeCrop(crop: Crop): Boolean
 
 
     /**
      *
      */
-    fun removeCrop(crop: Crop)
+    fun removeCrop(crop: Crop): Boolean
 
     /**
      * Asynchronously loads and initializes all crop data within a specific chunk.
@@ -77,8 +77,6 @@ interface CropStorage {
     fun unloadChunk(x: Int, y: Int, world: String)
 
 
-    /**
-     *
-     */
+
     fun saveAll()
 }

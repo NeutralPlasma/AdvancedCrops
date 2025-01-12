@@ -29,12 +29,16 @@ class BlockBreakListener(
         if(test != null){
             event.isCancelled = true
 
-            event.block.type = Material.DIAMOND_BLOCK
 
+            if(cropManager.deleteCrop(test)){
 
-            cropManager.deleteCrop(test)
+                event.block.type = if (event.block.type == Material.DIAMOND_BLOCK) Material.COAL_BLOCK else Material.DIAMOND_BLOCK
+                event.player.sendMessage(TextUtils.parse("<green>Broke a crop!"))
 
-            event.player.sendMessage(TextUtils.parse("<green>Broke a crop!"))
+            }else{
+                event.player.sendMessage(TextUtils.parse("<red>Failed breaking!"))
+            }
+            return
         }
 
 
