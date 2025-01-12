@@ -43,6 +43,10 @@ public interface CropManager {
      */
     fun addCrop(crop: Crop)
 
+
+
+    fun deleteCrop(crop: Crop)
+
     /**
      * Loads all crop data into the crop management system.
      *
@@ -84,4 +88,6 @@ public interface CropManager {
      * underlying data sources.
      */
     fun reloadCrops()
+
+
 }

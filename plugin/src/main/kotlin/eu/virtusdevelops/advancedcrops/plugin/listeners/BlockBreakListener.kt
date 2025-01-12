@@ -1,14 +1,19 @@
 package eu.virtusdevelops.advancedcrops.plugin.listeners
 
+import eu.virtusdevelops.advancedcrops.api.CropManager
+import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
 import eu.virtusdevelops.advancedcrops.api.crop.CropStorage
+import eu.virtusdevelops.virtuscore.chat.TextUtils
 import eu.virtusdevelops.virtuscore.crop.CropUtils
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 
 class BlockBreakListener(
-    private val cropStorage: CropStorage
+    private val cropStorage: CropStorage,
+    private val cropManager: CropManager
 ) : Listener {
 
 
@@ -16,6 +21,24 @@ class BlockBreakListener(
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent){
+        // debug:
+        val cropPosition = CropPosition.fromLocation(event.block.location)
+
+        val test = cropStorage.getCrop(cropPosition)
+
+        if(test != null){
+            event.isCancelled = true
+
+            event.block.type = Material.DIAMOND_BLOCK
+
+
+            cropManager.deleteCrop(test)
+
+            event.player.sendMessage(TextUtils.parse("<green>Broke a crop!"))
+        }
+
+
+
         // handle grass / shortgrass?
 
         var cropBlock = event.block

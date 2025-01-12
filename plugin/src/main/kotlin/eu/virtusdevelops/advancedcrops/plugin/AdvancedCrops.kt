@@ -9,7 +9,10 @@ import eu.virtusdevelops.advancedcrops.core.crop.CropStorageImpl
 import eu.virtusdevelops.advancedcrops.core.hoe.HoeStorageImpl
 import eu.virtusdevelops.advancedcrops.core.storage.AsyncExecutor
 import eu.virtusdevelops.advancedcrops.core.storage.SQLStorage
+import eu.virtusdevelops.advancedcrops.plugin.listeners.BlockBreakListener
 import eu.virtusdevelops.advancedcrops.plugin.listeners.BlockInteractListener
+import eu.virtusdevelops.advancedcrops.plugin.listeners.BlockPlaceListener
+import eu.virtusdevelops.advancedcrops.plugin.listeners.ChunkListener
 import eu.virtusdevelops.virtuscore.VirtusCore
 import eu.virtusdevelops.virtuscore.compatibility.ServerVersion
 import org.bukkit.plugin.java.JavaPlugin
@@ -23,10 +26,8 @@ class AdvancedCrops : JavaPlugin(), AdvancedCropsApi {
     private lateinit var cropManager: CropManager
 
     override fun onDisable() {
+        cropManager.saveCrops()
         logger.info("Successfully disabled AdvancedCrops!")
-
-
-
     }
 
 
@@ -39,17 +40,20 @@ class AdvancedCrops : JavaPlugin(), AdvancedCropsApi {
 
         storage = SQLStorage(this, this.logger)
 
-        registerEvents()
-
-        cropStorage = CropStorageImpl(storage.cropDao)
+        cropStorage = CropStorageImpl(storage.cropDao, logger)
         hoeStorage = HoeStorageImpl()
         cropManager = CropManagerImpl(cropStorage)
+
+        registerEvents()
     }
 
 
     private fun registerEvents(){
         val manager = VirtusCore.plugins()
         manager.registerEvents(BlockInteractListener(), this)
+        manager.registerEvents(ChunkListener(cropManager, cropStorage, logger), this)
+        manager.registerEvents(BlockPlaceListener(cropManager, logger), this)
+        manager.registerEvents(BlockBreakListener(cropStorage, cropManager), this)
     }
 
 

@@ -5,7 +5,7 @@ import java.util.concurrent.Executors
 class AsyncExecutor {
 
     companion object {
-        val executor = Executors.newFixedThreadPool(2)
+        val executor = Executors.newFixedThreadPool(1)
     }
 
 }

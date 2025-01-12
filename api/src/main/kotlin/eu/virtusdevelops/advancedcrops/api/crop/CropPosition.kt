@@ -4,7 +4,6 @@ import eu.virtusdevelops.advancedcrops.api.chunk.ChunkCoordinates
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.World
 
 data class CropPosition(
     /**
@@ -62,6 +61,20 @@ data class CropPosition(
             val chunkPos = ChunkPosition(location.blockX.rem(16), location.blockY, location.blockZ.rem(16))
 
             return CropPosition(chunkPos, chunkCoordinates, worldName)
+        }
+
+        fun fromCoordinates(
+            x: Int,
+            y: Int,
+            z: Int,
+            world: String
+        ): CropPosition{
+
+            return CropPosition(
+                ChunkPosition(x.rem(16), y, z.rem(16)),
+                ChunkCoordinates(x.shr(4), z.shr(4)),
+                world
+            )
         }
     }
 }

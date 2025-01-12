@@ -7,7 +7,7 @@ import eu.virtusdevelops.advancedcrops.api.crop.CropConfiguration
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
 import eu.virtusdevelops.advancedcrops.api.crop.CropStorage
 
-class CropManagerImpl(cropStorage: CropStorage) : CropManager {
+class CropManagerImpl(private val cropStorage: CropStorage) : CropManager {
 
 
     override fun getCrop(position: CropPosition): Crop? {
@@ -23,7 +23,14 @@ class CropManagerImpl(cropStorage: CropStorage) : CropManager {
     }
 
     override fun addCrop(crop: Crop) {
-        TODO("Not yet implemented")
+        cropStorage.storeCrop(crop)
+
+
+
+    }
+
+    override fun deleteCrop(crop: Crop) {
+        cropStorage.removeCrop(crop)
     }
 
     override fun loadCrops() {
@@ -31,7 +38,9 @@ class CropManagerImpl(cropStorage: CropStorage) : CropManager {
     }
 
     override fun saveCrops() {
-        TODO("Not yet implemented")
+
+        cropStorage.saveAll()
+
     }
 
     override fun reloadCrops() {

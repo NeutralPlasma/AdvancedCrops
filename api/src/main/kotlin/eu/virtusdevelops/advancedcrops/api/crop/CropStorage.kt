@@ -36,6 +36,12 @@ interface CropStorage {
      */
     fun storeCrop(crop: Crop)
 
+
+    /**
+     *
+     */
+    fun removeCrop(crop: Crop)
+
     /**
      * Asynchronously loads and initializes all crop data within a specific chunk.
      *
@@ -45,10 +51,34 @@ interface CropStorage {
     fun loadChunk(location: Location)
 
     /**
+     * Loads the crop data from a specific chunk in the given world.
+     *
+     * @param x The x-coordinate of the chunk to be loaded.
+     * @param y The z-coordinate of the chunk to be loaded.
+     * @param world The name of the world where the chunk is located.
+     */
+    fun loadChunk(x: Int, y: Int, world: String)
+
+    /**
      * Unloads crop data within a specific chunk, releasing its resources and saving any changes if necessary.
      *
      * @param location The location within the chunk to unload. This determines which chunk's crops are
      *                 de-initialized and their resources freed.
      */
     fun unloadChunk(location: Location)
+
+    /**
+     * Unloads crop data within the specified chunk, releasing its resources and saving any changes if necessary.
+     *
+     * @param x The x-coordinate of the chunk to be unloaded.
+     * @param y The z-coordinate of the chunk to be unloaded.
+     * @param world The name of the world where the chunk is located.
+     */
+    fun unloadChunk(x: Int, y: Int, world: String)
+
+
+    /**
+     *
+     */
+    fun saveAll()
 }
