@@ -21,27 +21,6 @@ class BlockBreakListener(
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockBreak(event: BlockBreakEvent){
-        // debug:
-        val cropPosition = CropPosition.fromLocation(event.block.location)
-
-        val test = cropStorage.getCrop(cropPosition)
-
-        if(test != null){
-            event.isCancelled = true
-
-
-            if(cropManager.deleteCrop(test)){
-
-                event.block.type = if (event.block.type == Material.DIAMOND_BLOCK) Material.COAL_BLOCK else Material.DIAMOND_BLOCK
-                event.player.sendMessage(TextUtils.parse("<green>Broke a crop!"))
-
-            }else{
-                event.player.sendMessage(TextUtils.parse("<red>Failed breaking!"))
-            }
-            return
-        }
-
-
 
         // handle grass / shortgrass?
 
@@ -59,6 +38,13 @@ class BlockBreakListener(
 
         event.isCancelled = true // cancel default breaking
         // do the crop processing
+
+        if(cropManager.processCropBreak(crop, event.block, event.player)){
+            event.player.sendMessage(TextUtils.parse("<green>Broke a crop!"))
+        }
+
+        return
+
     }
 
 }

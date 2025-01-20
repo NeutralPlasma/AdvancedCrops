@@ -4,8 +4,11 @@ import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
 import eu.virtusdevelops.advancedcrops.api.crop.Crop
 import eu.virtusdevelops.advancedcrops.api.crop.CropConfiguration
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
+import org.bukkit.OfflinePlayer
+import org.bukkit.block.Block
+import org.bukkit.entity.Player
 
-public interface CropManager {
+interface CropManager {
 
     /**
      * Retrieves a crop based on the specified position within the world and chunk.
@@ -48,46 +51,32 @@ public interface CropManager {
     fun deleteCrop(crop: Crop): Boolean
 
     /**
-     * Loads all crop data into the crop management system.
+     * Processes the breaking of a crop by a player, handling any necessary logic such as
+     * updates to the crop's state, rewards, and potential side effects.
      *
-     * This function is responsible for initializing and retrieving crop data
-     * from relevant data sources or persistent storage and making it available
-     * for use in the crop management system. It ensures that the system is prepared
-     * to manage and operate on crop instances during runtime.
-     *
-     * Usage of this method typically occurs during the initialization phase
-     * or when a full reload of crop data is required.
+     * @param crop The crop being broken, containing its state and metadata.
+     * @param block The block that is being broken (affects how multi block crops are broken)
+     * @param player The player who is breaking the crop.
+     * @return A boolean indicating whether the crop break operation was successfully processed.
      */
-    fun loadCrops()
+    fun processCropBreak(crop: Crop, block: Block, player: Player): Boolean
 
     /**
-     * Persists all crop data managed by the crop management system.
+     * Processes the event of breaking a crop, applying necessary updates and handling the
+     * associated logic.
      *
-     * This method is responsible for saving the state of all crops, ensuring that their
-     * information is retained for future use. It writes crop data to the appropriate
-     * storage or persistence layer, allowing it to be reloaded later. This is typically
-     * called during server shutdown, manual saves, or other significant lifecycle events
-     * where data integrity is critical. Proper implementation prevents data loss
-     * and ensures consistent crop management across sessions.
+     * @param crop The crop instance being broken. This includes its location, growth stage, and other metadata.
+     * @param block The block that is being broken (affects how multi block crops are broken)
+     * @return A boolean indicating whether the crop break event was successfully processed.
      */
-    fun saveCrops()
+    fun processCropBreak(crop: Crop, block: Block): Boolean
 
     /**
-     * Reloads all crop data managed by the system.
+     * Updates the state of the specified crop to simulate the passage of time, handling any growth,
+     * hydration, or other mechanics defined for the crop.
      *
-     * This method is used to refresh the internal state of the crop management system by unloading
-     * all current crop data and reloading it from the relevant data sources. It is typically called
-     * when an external event necessitates the reinitialization of crops, ensuring that the system
-     * operates on the latest and most accurate data.
-     *
-     * It invokes the unloading of previously managed crops, clears associated resources, and
-     * reloads crop configurations along with their current states from persistent storage or
-     * data sources.
-     *
-     * Calling this method ensures synchronization between the crop management system and its
-     * underlying data sources.
+     * @param crop The crop instance to be updated. Contains metadata such as growth stage,
+     * humidity, fertilizer, and other properties necessary for processing its state.
      */
-    fun reloadCrops()
-
-
+    fun tickCrop(crop: Crop)
 }

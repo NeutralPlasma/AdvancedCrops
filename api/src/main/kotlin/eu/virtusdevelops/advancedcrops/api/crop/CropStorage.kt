@@ -38,7 +38,10 @@ interface CropStorage {
 
 
     /**
+     * Removes the specified crop from the storage system.
      *
+     * @param crop The crop instance to be removed.
+     * @return A boolean indicating whether the removal was successful.
      */
     fun removeCrop(crop: Crop): Boolean
 
@@ -76,7 +79,12 @@ interface CropStorage {
      */
     fun unloadChunk(x: Int, y: Int, world: String)
 
-
-
+    /**
+     * Saves all unsaved crop data to the storage system.
+     *
+     * This method ensures that any changes to crop data are persisted.
+     * It operates on all currently managed crop entries within the storage,
+     * saving their states to prevent data loss or inconsistencies.
+     */
     fun saveAll()
 }

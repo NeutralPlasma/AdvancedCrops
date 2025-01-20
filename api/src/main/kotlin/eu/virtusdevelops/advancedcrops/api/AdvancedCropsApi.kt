@@ -1,6 +1,5 @@
 package eu.virtusdevelops.advancedcrops.api
 
-import eu.virtusdevelops.advancedcrops.api.crop.Crop
 import eu.virtusdevelops.advancedcrops.api.crop.CropStorage
 import eu.virtusdevelops.advancedcrops.api.hoe.HoeStorage
 import org.jetbrains.annotations.ApiStatus
@@ -18,6 +17,7 @@ interface AdvancedCropsApi {
          *
          * @return The version as an integer.
          */
+        @JvmStatic
         fun getVersion(): Int = 1
 
         /**
@@ -27,6 +27,7 @@ interface AdvancedCropsApi {
          * @throws NullPointerException if the API is not enabled.
          * @since 1
          */
+        @JvmStatic
         fun get(): AdvancedCropsApi {
             if(enabled) return implementation!!
             throw NullPointerException("AdvancedCropsApi is not enabled!")
@@ -38,6 +39,7 @@ interface AdvancedCropsApi {
          * @return true if the API is enabled, false otherwise.
          * @since 1
          */
+        @JvmStatic
         fun isEnabled(): Boolean = enabled
 
 

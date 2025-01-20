@@ -4,6 +4,7 @@ import eu.virtusdevelops.advancedcrops.api.CropManager
 import eu.virtusdevelops.advancedcrops.api.crop.Crop
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
 import eu.virtusdevelops.virtuscore.chat.TextUtils
+import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -16,6 +17,10 @@ class BlockPlaceListener(private val cropManager: CropManager, private val logge
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     fun onBlockPlace(event: BlockPlaceEvent) {
+
+
+        if(event.block.type != Material.WHEAT) return
+
         val crop = Crop(
             UUID.randomUUID(),
             "test",

@@ -31,21 +31,12 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
 
         if(chunkData.containsKey(world)){
             if(chunkData[world]!!.containsKey(chunkCoordinates)){
-                return chunkData[world]!!.get(chunkCoordinates)?.getItem(cropPosition.chunkPos)
+                return chunkData[world]!![chunkCoordinates]?.getItem(cropPosition.chunkPos)
 
             }
         }
 
-        /*if(crops.containsKey(world)) {
-            if (crops[world]?.containsKey(chunkCoordinates) == true) {
-                crops[world]?.get(chunkCoordinates)?.let {
-                    return it[cropPosition.chunkPos]
-                }
-            }
-        }*/
-        // if the chunk for some reason isn't yet loaded
         AsyncExecutor.executor.submit {
-            // load the chunk from storage
             loadChunk(location)
         }
         return null
@@ -75,7 +66,7 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
         if(chunkData[crop.location.worldName] != null) {
 
             if(chunkData[crop.location.worldName]!!.containsKey(crop.location.chunkCoordinates)){
-                if(chunkData[crop.location.worldName]!!.get(crop.location.chunkCoordinates)?.removeItem(crop) == true)
+                if(chunkData[crop.location.worldName]!![crop.location.chunkCoordinates]?.removeItem(crop) == true)
                     return true
             }
             return false
@@ -106,7 +97,7 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
                 chunkData[world] = HashMap()
             }
 
-            chunkData[world]!!.set(chunkCoordinates, newChunkData)
+            chunkData[world]!![chunkCoordinates] = newChunkData
 
             //logger.info("Chunk loaded: $chunkCoordinates")
 
@@ -123,20 +114,7 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
 
         AsyncExecutor.executor.submit {
             // first process removed
-            for(crop in removedChunk.removedItems.values) {
-                cropDao.delete(crop.id)
-            }
-
-            // process added and existing items
-            for(crop in removedChunk.addedItems.values) {
-                cropDao.save(crop)
-            }
-
-            // update any crops that were updated
-            for(crop in removedChunk.items.values) {
-                if(crop.changed)
-                    cropDao.save(crop)
-            }
+            saveChunk(removedChunk)
         }
     }
 
@@ -156,7 +134,6 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
 
     }
 
-
     override fun saveAll() {
 
         //
@@ -164,24 +141,27 @@ class CropStorageImpl(private val cropDao: CropDao, private val logger: Logger) 
 
             for (chunk in chunkData[world]!!.values) {
 
-
-                for (crop in chunk.removedItems.values) {
-                    cropDao.delete(crop.id)
-                }
-
-                // process added and existing items
-                for (crop in chunk.addedItems.values) {
-                    cropDao.save(crop)
-                }
-
-                // update any crops that were updated
-                for (crop in chunk.items.values) {
-                    if (crop.changed)
-                        cropDao.save(crop)
-                }
-
-
+                // process crops that have been removed
+                saveChunk(chunk)
             }
+        }
+    }
+
+
+    private fun saveChunk(chunk : ChunkData<Crop>){
+        for (crop in chunk.removedItems.values) {
+            cropDao.delete(crop.id)
+        }
+
+        // process newly added crops to the chunk
+        for (crop in chunk.addedItems.values) {
+            cropDao.save(crop)
+        }
+
+        // update any crops that were updated
+        for (crop in chunk.items.values) {
+            if (crop.changed)
+                cropDao.save(crop)
         }
     }
 }

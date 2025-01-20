@@ -1,7 +1,7 @@
 package eu.virtusdevelops.advancedcrops.api.crop
 
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
-import eu.virtusdevelops.advancedcrops.api.item.StoragableItem
+import eu.virtusdevelops.advancedcrops.api.item.StorableItem
 import java.util.UUID
 
 data class Crop(
@@ -17,7 +17,7 @@ data class Crop(
     val placeTime: Long,
     var updateTime: Long,
     var changed: Boolean = false,
-) : StoragableItem{
+) : StorableItem{
     override fun getPosition(): ChunkPosition {
         return location.chunkPos
     }

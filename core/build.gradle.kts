@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":shared"))
     implementation(libs.hikariCP)
+    implementation(libs.virtusCore)
 }
 
 tasks.test {

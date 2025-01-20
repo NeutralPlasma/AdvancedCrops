@@ -2,10 +2,10 @@ package eu.virtusdevelops.advancedcrops.core.storage
 
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkCoordinates
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
-import eu.virtusdevelops.advancedcrops.api.item.StoragableItem
+import eu.virtusdevelops.advancedcrops.api.item.StorableItem
 
 
-class ChunkData<T : StoragableItem>(
+class ChunkData<T : StorableItem>(
     val chunkCoordinates : ChunkCoordinates,
     val items : HashMap<ChunkPosition, T> = HashMap()) {
 
