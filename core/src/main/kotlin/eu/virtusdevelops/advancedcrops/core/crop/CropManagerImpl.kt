@@ -3,10 +3,9 @@ package eu.virtusdevelops.advancedcrops.core.crop
 import eu.virtusdevelops.advancedcrops.api.CropManager
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
 import eu.virtusdevelops.advancedcrops.api.crop.Crop
-import eu.virtusdevelops.advancedcrops.api.crop.CropConfiguration
+import eu.virtusdevelops.advancedcrops.api.crop.configuration.CropConfiguration
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
 import eu.virtusdevelops.advancedcrops.api.crop.CropStorage
-import eu.virtusdevelops.virtuscore.chat.TextUtils
 import eu.virtusdevelops.virtuscore.crop.CropUtils
 import eu.virtusdevelops.virtuscore.item.ItemUtils
 import org.bukkit.Material

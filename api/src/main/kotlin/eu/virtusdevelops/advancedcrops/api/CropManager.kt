@@ -2,9 +2,8 @@ package eu.virtusdevelops.advancedcrops.api
 
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
 import eu.virtusdevelops.advancedcrops.api.crop.Crop
-import eu.virtusdevelops.advancedcrops.api.crop.CropConfiguration
+import eu.virtusdevelops.advancedcrops.api.crop.configuration.CropConfiguration
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
-import org.bukkit.OfflinePlayer
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 

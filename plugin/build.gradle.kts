@@ -21,7 +21,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":shared"))
     implementation(libs.virtusCore)
-
+    implementation(libs.bundles.cloudEcosystem)
 
     testImplementation(kotlin("test"))
 }
@@ -33,16 +33,17 @@ kotlin {
     jvmToolchain(21)
 }
 
+
+val authorsList = listOf("VirtusDevelops")
+
 paper {
     main = "eu.virtusdevelops.advancedcrops.plugin.AdvancedCrops"
-    foliaSupported = false
+    loader = "eu.virtusdevelops.advancedcrops.plugin.AdvancedCropsLoader"
     apiVersion = "1.21"
-    authors = listOf("VirtusDevelops")
+    authors = authorsList
 
     name = "AdvancedCrops"
     description = "Advanced crops for your server."
-
-    load = BukkitPluginDescription.PluginLoadOrder.STARTUP
 
 
     serverDependencies {
@@ -51,6 +52,7 @@ paper {
             required = true
         }
     }
+
 }
 
 bukkit {
@@ -58,8 +60,11 @@ bukkit {
     apiVersion = "1.21"
     foliaSupported = false
     load = BukkitPluginDescription.PluginLoadOrder.STARTUP
-    authors = listOf("VirtusDevelops")
+    authors = authorsList
     depend = listOf("Vault")
+    libraries = listOf(
+        "com.h2database.h2:2.3.232"
+    )
 }
 
 

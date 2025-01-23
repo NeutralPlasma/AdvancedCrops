@@ -85,15 +85,12 @@ class SQLStorage(private val plugin: JavaPlugin, private val logger: Logger) {
 
 
     private fun setupH2DataSource(): HikariConfig? {
-        val classLoader = loadH2Library()
         try {
-            Thread.currentThread().contextClassLoader = classLoader
-            val h2Driver = classLoader!!.loadClass("org.h2.Driver")
-                ?: throw ClassNotFoundException("org.h2.Driver")
+
             val hikariConfig = HikariConfig()
             hikariConfig.maxLifetime = 60000
             hikariConfig.maximumPoolSize = 15
-            hikariConfig.driverClassName = h2Driver.name
+            hikariConfig.driverClassName = "org.h2.Driver"
 
             val path = plugin.dataFolder.absolutePath
             createDBFile()
