@@ -1,9 +1,11 @@
 package eu.virtusdevelops.advancedcrops.plugin
 
 import eu.virtusdevelops.advancedcrops.api.AdvancedCropsApi
+import eu.virtusdevelops.advancedcrops.api.CropConfigurationManager
 import eu.virtusdevelops.advancedcrops.api.CropManager
 import eu.virtusdevelops.advancedcrops.api.crop.CropStorage
 import eu.virtusdevelops.advancedcrops.api.hoe.HoeStorage
+import eu.virtusdevelops.advancedcrops.core.configuration.CropConfigurationManagerImpl
 import eu.virtusdevelops.advancedcrops.core.crop.CropManagerImpl
 import eu.virtusdevelops.advancedcrops.core.crop.CropStorageImpl
 import eu.virtusdevelops.advancedcrops.core.hoe.HoeStorageImpl
@@ -35,6 +37,7 @@ class AdvancedCrops : JavaPlugin(), AdvancedCropsApi {
     private lateinit var cropStorage: CropStorage
     private lateinit var hoeStorage: HoeStorage
     private lateinit var cropManager: CropManager
+    private lateinit var cropConfigurationManager: CropConfigurationManager
 
     private lateinit var minecraftHelp: MinecraftHelp<Source>
 
@@ -55,7 +58,8 @@ class AdvancedCrops : JavaPlugin(), AdvancedCropsApi {
 
         cropStorage = CropStorageImpl(storage.cropDao, logger)
         hoeStorage = HoeStorageImpl()
-        cropManager = CropManagerImpl(cropStorage)
+        cropConfigurationManager = CropConfigurationManagerImpl(this)
+        cropManager = CropManagerImpl(cropStorage, cropConfigurationManager)
 
         NBTUtil.load(this)
         registerEvents()
@@ -133,5 +137,9 @@ class AdvancedCrops : JavaPlugin(), AdvancedCropsApi {
 
     override fun getCropManager(): CropManager {
         return cropManager
+    }
+
+    override fun getCropConfigurationManager(): CropConfigurationManager {
+        return cropConfigurationManager
     }
 }

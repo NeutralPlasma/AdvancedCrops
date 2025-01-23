@@ -81,4 +81,13 @@ interface AdvancedCropsApi {
      * @return An instance of CropManager, which provides functionality for managing crops within the system.
      */
     fun getCropManager(): CropManager
+
+
+    /**
+     * Retrieves the CropConfigurationManager instance associated with the API.
+     *
+     * @return An instance of CropConfigurationManager, which provides methods for managing crop configurations
+     * such as retrieving, adding, and removing configurations within the system.
+     */
+    fun getCropConfigurationManager(): CropConfigurationManager
 }

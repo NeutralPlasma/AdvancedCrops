@@ -4,7 +4,6 @@ import net.minecrell.pluginyml.paper.PaperPluginDescription
 plugins {
     kotlin("jvm")
     id("com.gradleup.shadow") version "8.3.5"
-    id("net.minecrell.plugin-yml.paper") version "0.6.0"
     id("de.eldoria.plugin-yml.bukkit") version "0.6.0"
 }
 
@@ -36,26 +35,11 @@ kotlin {
 
 val authorsList = listOf("VirtusDevelops")
 
-paper {
-    main = "eu.virtusdevelops.advancedcrops.plugin.AdvancedCrops"
-    loader = "eu.virtusdevelops.advancedcrops.plugin.AdvancedCropsLoader"
-    apiVersion = "1.21"
-    authors = authorsList
-
-    name = "AdvancedCrops"
-    description = "Advanced crops for your server."
 
 
-    serverDependencies {
-        register("Vault"){
-            load = PaperPluginDescription.RelativeLoadOrder.BEFORE
-            required = true
-        }
-    }
-
-}
 
 bukkit {
+    name = "AdvancedCrops"
     main = "eu.virtusdevelops.advancedcrops.plugin.AdvancedCrops"
     apiVersion = "1.21"
     foliaSupported = false
@@ -63,7 +47,7 @@ bukkit {
     authors = authorsList
     depend = listOf("Vault")
     libraries = listOf(
-        "com.h2database.h2:2.3.232"
+        "com.h2database:h2:2.3.232"
     )
 }
 

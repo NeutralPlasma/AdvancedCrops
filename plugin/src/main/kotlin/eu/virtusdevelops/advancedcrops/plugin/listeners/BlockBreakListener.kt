@@ -3,13 +3,17 @@ package eu.virtusdevelops.advancedcrops.plugin.listeners
 import eu.virtusdevelops.advancedcrops.api.CropManager
 import eu.virtusdevelops.advancedcrops.api.crop.CropPosition
 import eu.virtusdevelops.advancedcrops.api.crop.CropStorage
+import eu.virtusdevelops.advancedcrops.plugin.util.NBTUtil
 import eu.virtusdevelops.virtuscore.chat.TextUtils
 import eu.virtusdevelops.virtuscore.crop.CropUtils
+import eu.virtusdevelops.virtuscore.item.ItemUtils
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.inventory.ItemStack
+import org.bukkit.persistence.PersistentDataType
 
 class BlockBreakListener(
     private val cropStorage: CropStorage,
@@ -23,6 +27,18 @@ class BlockBreakListener(
     fun onBlockBreak(event: BlockBreakEvent){
 
         // handle grass / shortgrass?
+
+        // temp
+        if(event.block.type == Material.DIAMOND_BLOCK) {
+            var item = ItemStack(Material.WHEAT_SEEDS)
+            item = ItemUtils.rename(item, "<green>Diamond Seeds")
+            NBTUtil.setNBTTag(item, NBTUtil.CROP_KEY, PersistentDataType.STRING, "diamondCrop")
+
+            ItemUtils.give(event.player, item)
+
+            return
+        }
+
 
         var cropBlock = event.block
         if(!CropUtils.isCrop(cropBlock)){

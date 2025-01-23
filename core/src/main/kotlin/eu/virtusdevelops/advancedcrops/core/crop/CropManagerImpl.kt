@@ -1,5 +1,6 @@
 package eu.virtusdevelops.advancedcrops.core.crop
 
+import eu.virtusdevelops.advancedcrops.api.CropConfigurationManager
 import eu.virtusdevelops.advancedcrops.api.CropManager
 import eu.virtusdevelops.advancedcrops.api.chunk.ChunkPosition
 import eu.virtusdevelops.advancedcrops.api.crop.Crop
@@ -12,7 +13,8 @@ import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 
-class CropManagerImpl(private val cropStorage: CropStorage) : CropManager {
+class CropManagerImpl(private val cropStorage: CropStorage,
+                      private val cropConfigurationManager: CropConfigurationManager) : CropManager {
 
 
     override fun getCrop(position: CropPosition): Crop? {
@@ -43,16 +45,24 @@ class CropManagerImpl(private val cropStorage: CropStorage) : CropManager {
 
         // get all crop block
         val blocks = CropUtils.getCropBlocks(block)
+        val configuration = cropConfigurationManager.getCropConfiguration(crop.configurationName)
 
         // break each block check growth stage and give rewards for each
         blocks.forEach {
             it.setType(org.bukkit.Material.AIR, false)
-            it.location.world.dropItemNaturally(it.location, ItemUtils.create(Material.STONE, "", emptyList()))
+
+            configuration?.processDrops(it.location)
+
+            //it.location.world.dropItemNaturally(it.location, ItemUtils.create(Material.STONE, "", emptyList()))
         }
 
         // check if block == crop location then remove from storage
-        if(crop.location == CropPosition.fromLocation(block.location))
+        if(crop.location == CropPosition.fromLocation(block.location)){
+
             cropStorage.removeCrop(crop)
+            // drop seed
+
+        }
 
         return true
 
